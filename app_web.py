@@ -1,6 +1,5 @@
 import streamlit as st
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 import requests
 import base64
 from datetime import datetime
@@ -13,12 +12,16 @@ st.set_page_config(page_title="Quản lý Lệnh Cạp - Luan", layout="wide")
 # API Key ImgBB của bạn
 IMGBB_API_KEY = "38c76e7f06864f01eb8ea9a5e011c4ae" 
 
-# --- 2. KẾT NỐI GOOGLE SHEETS ---
+# --- 2. KẾT NỐI GOOGLE SHEETS BẰNG SECRETS ---
 def authenticate_sheets():
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     try:
-        creds = ServiceAccountCredentials.from_json_keyfile_name("service_account.json", scope)
-        return gspread.authorize(creds)
+        # Nếu đang chạy trên Streamlit Cloud (tìm thấy két sắt Secrets)
+        if "gcp_service_account" in st.secrets:
+            credentials = dict(st.secrets["gcp_service_account"])
+            return gspread.service_account_from_dict(credentials)
+        # Nếu đang chạy test trên máy tính cá nhân (tìm file json vật lý)
+        else:
+            return gspread.service_account(filename="service_account.json")
     except Exception as e:
         st.error(f"Lỗi kết nối Google Sheets: {e}")
         return None
@@ -42,7 +45,7 @@ def upload_to_imgbb(file):
     except:
         return ""
 
-# --- 4. GIAO DIỆN NHẬP LIỆU (CẬP NHẬT THEO THỨ TỰ MỚI) ---
+# --- 4. GIAO DIỆN NHẬP LIỆU ---
 st.title("🏗️ Hệ Thống Quản Lý Lệnh Cạp")
 st.markdown("---")
 
@@ -73,6 +76,8 @@ st.markdown("---")
 if st.button("🚀 XÁC NHẬN CẬP NHẬT LÊN SHEET", use_container_width=True):
     if not lenh_cap:
         st.warning("Vui lòng nhập Lệnh Cạp!")
+    elif gc is None:
+        st.error("Không thể kết nối với Google Sheets. Vui lòng kiểm tra lại cấu hình tài khoản (Secrets/JSON).")
     else:
         with st.spinner('Đang upload ảnh và ghi dữ liệu...'):
             try:
@@ -82,7 +87,7 @@ if st.button("🚀 XÁC NHẬN CẬP NHẬT LÊN SHEET", use_container_width=Tru
                 link3 = upload_to_imgbb(img3)
                 link4 = upload_to_imgbb(img4)
 
-                # Rút gọn link (Dùng dấu chấm phẩy để tránh lỗi #ERROR!)
+                # Rút gọn link
                 f_link1 = f'=HYPERLINK("{link1}"; "Xem ảnh")' if link1 else ""
                 f_link2 = f'=HYPERLINK("{link2}"; "Xem ảnh")' if link2 else ""
                 f_link3 = f'=HYPERLINK("{link3}"; "Xem ảnh")' if link3 else ""
@@ -102,7 +107,7 @@ if st.button("🚀 XÁC NHẬN CẬP NHẬT LÊN SHEET", use_container_width=Tru
                         if clean: numeric_stt.append(int(clean))
                 stt_moi = (max(numeric_stt) + 1) if numeric_stt else 1
 
-                # Tạo dòng dữ liệu theo đúng thứ tự mới của bro
+                # Tạo dòng dữ liệu
                 final_row = [
                     stt_moi,            # Cột A
                     lenh_cap,           # Cột B
