@@ -54,7 +54,8 @@ sheet_name_input = st.sidebar.text_input("Tên file Google Sheet", value="Demo_Q
 
 with st.container():
     col1, col2 = st.columns(2)
-with col1:
+    
+    with col1:
         st.subheader("📝 Thông tin chi tiết")
         lenh_cap = st.text_input("Lệnh Cạp")
         
