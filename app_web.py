@@ -2,7 +2,7 @@ import streamlit as st
 import gspread
 import requests
 import base64
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import re
 
@@ -54,11 +54,18 @@ sheet_name_input = st.sidebar.text_input("Tên file Google Sheet", value="Demo_Q
 
 with st.container():
     col1, col2 = st.columns(2)
-    with col1:
+with col1:
         st.subheader("📝 Thông tin chi tiết")
         lenh_cap = st.text_input("Lệnh Cạp")
-        ngay_nhap = st.date_input("Ngày", datetime.now())
-        thoi_gian = st.time_input("Thời gian", datetime.now().time())
+        
+        # --- CODE MỚI ĐỂ LẤY GIỜ VIỆT NAM ---
+        # Lấy giờ UTC chuẩn, sau đó cộng thêm 7 tiếng
+        now_vn = datetime.utcnow() + timedelta(hours=7)
+        
+        ngay_nhap = st.date_input("Ngày", now_vn.date())
+        thoi_gian = st.time_input("Thời gian", now_vn.time())
+        # ------------------------------------
+        
         cong_ty = st.text_input("Công Ty")
         so_tau = st.text_input("Số tàu")
         kl_cap = st.number_input("Khối lượng (KL) cạp", min_value=0.0, step=0.1)
