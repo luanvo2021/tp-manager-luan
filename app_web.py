@@ -7,7 +7,7 @@ import pandas as pd
 import re
 
 # --- 1. CẤU HÌNH HỆ THỐNG ---
-st.set_page_config(page_title="Quản lý Lệnh Cạp - Luan", layout="wide")
+st.set_page_config(page_title="Quản lý Lệnh Cạp", layout="wide")
 
 # --- CHẶN TÍNH NĂNG VUỐT TẢI LẠI TRÊN ĐIỆN THOẠI ---
 st.markdown(
