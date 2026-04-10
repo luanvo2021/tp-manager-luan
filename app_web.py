@@ -82,7 +82,7 @@ with st.container():
         
         cong_ty = st.text_input("Công Ty")
         so_tau = st.text_input("Số tàu")
-        kl_cap = st.number_input("Khối lượng (KL) cạp", min_value=0.0, step=0.1)
+        kl_cap = st.number_input("Khối lượng (KL) cạp (m3)", min_value=0.0, step=0.1)
         noi_dung = st.text_area("Nội dung", height=100)
 
     with col2:
