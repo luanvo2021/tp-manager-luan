@@ -147,7 +147,7 @@ if st.button("🚀 XÁC NHẬN CẬP NHẬT LÊN SHEET", use_container_width=Tru
                 # Chèn vào hàng số 2
                 ws.insert_row(final_row, index=2, value_input_option='USER_ENTERED')
                 
-                st.success(f"✅ Đã lưu thành công dữ liệu STT {stt_moi} vào Sheet Data1!")
+                st.success(f"✅ Đã lưu thành công dữ liệu STT {stt_moi} vào Cơ sở dữ liệu chung")
                 
             except Exception as e:
                 st.error(f"Lỗi: {e}")
