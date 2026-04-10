@@ -9,6 +9,19 @@ import re
 # --- 1. CẤU HÌNH HỆ THỐNG ---
 st.set_page_config(page_title="Quản lý Lệnh Cạp - Luan", layout="wide")
 
+# --- CHẶN TÍNH NĂNG VUỐT TẢI LẠI TRÊN ĐIỆN THOẠI ---
+st.markdown(
+    """
+    <style>
+    /* Tắt tính năng vuốt để tải lại (Pull-to-refresh) và sửa lỗi kẹt cuộn trang */
+    html, body, [data-testid="stAppViewContainer"] {
+        overscroll-behavior-y: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # API Key ImgBB của bạn
 IMGBB_API_KEY = "38c76e7f06864f01eb8ea9a5e011c4ae" 
 
