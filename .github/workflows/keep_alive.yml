@@ -1,0 +1,15 @@
+name: Giu cho Streamlit luon thuc
+
+on:
+  schedule:
+    # Chạy tự động mỗi 30 phút
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # Cho phép chạy bằng tay nếu cần
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Streamlit App
+        run: |
+          curl -I "https://tp-manager-luan-26vdcw3ubd94l6sgzskfn3.streamlit.app/_stcore/health"
