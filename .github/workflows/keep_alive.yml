@@ -2,14 +2,59 @@ name: Giu cho Streamlit luon thuc
 
 on:
   schedule:
-    # Chạy tự động mỗi 30 phút
     - cron: '*/30 * * * *'
-  workflow_dispatch: # Cho phép chạy bằng tay nếu cần
+  workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Streamlit App
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
         run: |
-          curl -I "https://tp-manager-luan-26vdcw3ubd94l6sgzskfn3.streamlit.app/_stcore/health"
+          python -m pip install --upgrade pip
+          pip install playwright
+          playwright install chromium
+
+      - name: Wake up Streamlit
+        run: |
+          cat << 'EOF' > wake.py
+          from playwright.sync_api import sync_playwright
+          import time
+
+          def run(playwright):
+              # Mo mot trinh duyet Chrome ao
+              browser = playwright.chromium.launch(headless=True)
+              page = browser.new_page()
+              print('Truy cap trang web...')
+              
+              # Truy cap vao app cua ban
+              page.goto('https://tp-manager-luan-26vdcw3ubd94l6sgzskfn3.streamlit.app/', timeout=60000)
+              
+              # Doi 5 giay de giao dien load xong
+              time.sleep(5)
+              
+              try:
+                  # Tim nut "Yes, get this app back up!"
+                  button = page.locator('button:has-text("Yes, get this app back up!")')
+                  if button.count() > 0:
+                      print('Phat hien app dang ngu. Dang nhan nut danh thuc...')
+                      button.click()
+                      # Doi 10 giay cho app khoi dong lai
+                      time.sleep(10)
+                      print('Da danh thuc thanh cong!')
+                  else:
+                      print('App van dang thuc, khong can danh thuc.')
+              except Exception as e:
+                  print('Co loi xay ra:', e)
+              
+              browser.close()
+
+          with sync_playwright() as playwright:
+              run(playwright)
+          EOF
+          python wake.py
